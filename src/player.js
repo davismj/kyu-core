@@ -6,28 +6,47 @@
  * @class
  */
 export class Player {
-	constructor() {
-		this.cards = [];
+	
+	static new(name = '') {
+		// var player = players.find(player => !player.playing);
+		// if (player) {
+		// 	player.initialize();
+		// } else {
+		var player = new Player();
+		player.name = name;
+		// 	Player.players.push(player);
+		// }
+		return player;
 	}
-	join(game) {
-		if (!this.canJoin(game))
-			return console.log('Player cannot join game.');
-		game.players.add(this);
-		return { with: hand => this.use(hand).in(game) };
+
+	// static players = [];
+
+	constructor(player = {}) {
+		this.name = player.name;
+		this.cards = player.cards || [];
 	}
-	use(hand) {
-		return { in: game => { game.hands.set(this, hand) } };
+
+	toString() { 
+		return this.name || "Anonymous player";
+	}
+
+	initialize() {
+		this.cards.splice(0, Number.MAX_VALUE);
+		this.name = null;
 	}
 	
 	canJoin(game) {
 		return this.cards.length >= game.board.minHand;
 	}
+
 	canUse(cardOrHand) {
 		if (cardOrHand.length) {
-			let hand = cardOrHand;
-			return hand.every(card => this.canUse(card));
+			var hand = cardOrHand;
+			return hand.length == 5 
+				&& hand.every(card => this.canUse(card));
 		}
-		let card = cardOrHand;
+		var card = cardOrHand;
+		// TODO needs to handle duplicates
 		return this.cards.some(c => c == card);
 	}
 }

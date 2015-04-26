@@ -4,6 +4,7 @@
  */
 export class Card {
 	constructor(values) {
+		this.id = Guid();
 		this.top = values.top;
 		this.right = values.right;
 		this.bottom = values.bottom;
@@ -22,4 +23,14 @@ export class Card {
 		console.log(`Random card generated: ${c}.`);
 		return c;
 	}
+}
+
+function Guid() {
+	return Guid.s4() + Guid.s4() + '-' + Guid.s4() + '-' + Guid.s4()
+   		+ '-' + Guid.s4() + '-' + Guid.s4() + Guid.s4() + Guid.s4();
+}
+Guid.s4 = function() {
+	return Math.floor((1 + Math.random()) * 0x10000)
+       .toString(16)
+       .substring(1);	
 }

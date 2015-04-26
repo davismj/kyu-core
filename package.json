@@ -18,11 +18,7 @@
   },
   "homepage": "https://github.com/davismj/kyu",
   "devDependencies": {
-    "6to5": "2.x.x",
-    "6to5ify": "x.x.x",
-    "browserify": "x.x.x"
+    "babelify": "^5.0.4"
   },
-  "dependencies": {
-  
-  }
+  "dependencies": {}
 }
