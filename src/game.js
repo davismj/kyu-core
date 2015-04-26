@@ -4,7 +4,7 @@ import { Board } from "./board";
  * A game has two players and a Kyu board.
  * @class 
  */
-export default class Game {
+export class Game {
 	
 	/** 
 	 * Creates a new game. Recycles an ended game if available, otherwise

@@ -18,7 +18,10 @@
   },
   "homepage": "https://github.com/davismj/kyu",
   "devDependencies": {
-    "babelify": "^5.0.4"
+    "gulp": "x.x.x",
+    "babelify": "x.x.x",
+    "browserify": "x.x.x",
+    "vinyl-source-stream": "x.x.x"
   },
   "dependencies": {}
 }
