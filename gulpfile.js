@@ -6,10 +6,10 @@ var source = require('vinyl-source-stream');
 gulp.task('default', function() {
 	browserify({
 		entries: './main.js',
-		basedir: './src'
+		basedir: './src',
+		standalone: 'kyu-core'
 	})
 	.transform(babelify.configure({
-		modules: 'system',
 		moduleIds: false,
 		comments: false,
 		compact: false,

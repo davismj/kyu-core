@@ -1,5 +1,5 @@
 import { Board } from "./board";
-
+import { ComputerPlayer } from "./player";
 /** 
  * A game has two players and a Kyu board.
  * @class 
@@ -146,6 +146,20 @@ export class Game {
 			&& !this.board[position];
 	}
 
+	/** TODO test doc
+	 * Test the outcome of a play.
+	 */
+	testPlay(player, card, position) {
+
+		// if invalid play, return valueless
+		if (!this.canPlay(player, card, position)) {
+			return -1;
+		}
+
+		// test outcome of the play using game rules
+		return Rules.compute(this, player, card, position).length;
+	}
+
 	/** TODO doc
 	 * Applies a play to the game.
 	 */
@@ -164,8 +178,10 @@ export class Game {
 		this.board.splice(position, 1, hand.splice(cardIndex, 1)[0]);
 
 		// apply game rules to the play
-		this.board[position].owner = player;
-		Rules.apply(this, player, position);
+		this.board[position].owner = player
+		for (let won of Rules.compute(this, player, card, position)) {
+			won.owner = player;
+		}
 
 		this.nextTurn();
 	}
@@ -174,6 +190,7 @@ export class Game {
 
 		// if the board is full, end the game
 		if (this.board.every(s => s)) {
+			this.turn = null;
 			return this.end();
 		}
 
@@ -181,12 +198,18 @@ export class Game {
 		for (let player of this.players) {
 			if (this.turn != player) {
 				this.turn = player;
-				return;
+				break;
 			}
+		}
+
+		if (this.turn instanceof ComputerPlayer) { 
+			var best = this.turn.findBestPlay(this);
+			this.play(this.turn, best.card, best.pos);
 		}
 	}
 }
 
+// TODO bitmask
 class Rules {
 
 	static ADJACENT = 'adjacent';
@@ -194,93 +217,64 @@ class Rules {
 	// static CHAIN = 'chain';
 	// static ADD = 'add';
 	// static SAME = 'same';
-	static apply(game, player, position, won = []) {
+	static compute(game, player, card, position, won = []) {
 
-		var center = game.board[position];
-			// same = true;
-			// addVal = null;
+		// var same = true;
+		// 	addVal = null;
 
 		if (game.rules.includes(Rules.ADJACENT)) {
 
-			var above = game.board[position - 3],
-				right = game.board[position + 1],
-				below = game.board[position + 3],
-				left = game.board[position - 1];
-
-			if (above && above.owner != player) {
-				if (above.bottom < center.top) {
+			var abovePos = position - 3,
+				above = game.board[abovePos],
+				rightPos = position % 3 < 2 ? position + 1 : -1,
+				right = game.board[rightPos],
+				belowPos = position + 3,
+				below = game.board[belowPos],
+				leftPos = position % 3 > 0 ? position - 1 : -1,
+				left = game.board[leftPos];
+				
+			if (above && above.owner != player && !won.includes(abovePos)) {
+				if (above.bottom < card.top) {
 					won.push(above);
 				}
 
-				// same = same && above.bottom == center.top;
+				// same = same && above.bottom == card.top;
 			}
 
-			if (right && right.owner != player) {
-				if (right.left < center.right) {
+			if (right && right.owner != player && !won.includes(rightPos)) {
+				if (right.left < card.right) {
 					won.push(right);
 				}
 
-				// same = same && right.left == center.right;
+				// same = same && right.left == card.right;
 			}
 
-			if (below && below.owner != player) {
-				if (below.top < center.bottom) {
+			if (below && below.owner != player && !won.includes(belowPos)) {
+				if (below.top < card.bottom) {
 					won.push(below);
 				}
 
-				// same = same && below.top == center.bottom;
+				// same = same && below.top == card.bottom;
 			}
 
-			if (left && left.owner != player) {
-				if (left.right < center.left) {
+			if (left && left.owner != player && !won.includes(rightPos)) {
+				if (left.right < card.left) {
 					won.push(left);
 				}
 
-				// same = same && left.right == center.left;
+				// same = same && left.right == card.left;
 			}
 		}
 
-		// if (game.rules.includes(Rules.DIAGONAL)) { 
-			
-		// 	var upperRight = game.board[position - 2],
-		// 		lowerRight = game.board[position + 4],
-		// 		lowerLeft = game.board[position + 2],
-		// 		upperLeft = game.board[position - 4];
-
-		// 	if (upperRight && upperRight.owner != player) {
-			
-		// 	}
-
-		// 	if (lowerRight && lowerRight.owner != player) {
-				
-		// 	}
-
-		// 	if (lowerLeft && lowerLeft.owner != player) {
-				
-		// 	}
-
-		// 	if (upperLeft && upperLeft.owner != player) {
-				
-		// 	}
-		// }
-
-		// if (game.rules.includes(Rules.SAME)) {
-
-		// }
-
-		// if (game.rules.includes(Rules.ADD)) {
-
-		// }
-
-		for (let card of won) {
-
-			if (game.rules.includes(Rules.CHAIN)) {
-				var cardPos = game.board.indexOf(card);
-				Rules.apply(game, player, cardPos, won)
+		// if (game.rules.includes(Rules.DIAGONAL)
+		if (game.rules.includes(Rules.CHAIN)) {
+			for (let wonCard of won) {
+				var cardPos = game.board.indexOf(wonCard);
+				Rules.compute(game, player, wonCard, cardPos, won)	
 			}
-
-			card.owner = player;
 		}
+
+		return won;
 	}
 }
 
