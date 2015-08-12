@@ -25,6 +25,7 @@ export class Card {
 	}
 }
 
+// TODO, base 64 guid
 function Guid() {
 	return Guid.s4() + Guid.s4() + '-' + Guid.s4() + '-' + Guid.s4()
    		+ '-' + Guid.s4() + '-' + Guid.s4() + Guid.s4() + Guid.s4();

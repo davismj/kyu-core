@@ -1,8 +1,9 @@
 {
-  "name": "kyu",
+  "name": "kyu-core",
   "version": "0.1.0",
   "description": "Engine for the 3x3 grid card game.",
-  "main": "main.js",
+  "main": "src/main.js",
+  "registry": "npm",
   "repository": {
     "type": "git",
     "url": "https://github.com/davismj/kyu"
