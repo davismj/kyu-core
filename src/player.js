@@ -1,4 +1,5 @@
 import { Card } from './card';
+import uuid from './uuid';
 
 /** 
  * A general player has cards and can join games.
@@ -6,24 +7,11 @@ import { Card } from './card';
  */
 export class Player {
   
-  static new(name = '') {
-    // var player = players.find(player => !player.playing);
-    // if (player) {
-    //  player.initialize();
-    // } else {
-    var player = new Player();
-    player.name = name;
-    //  Player.players.push(player);
-    // }
-    return player;
-  }
-
-  // static players = [];
-
   constructor(player = {}) {
+    this.id = player.id;
     this.name = player.name;
     this.cards = (player.cards || [])
-      .map(c => c instanceof Card ? c : new Card(c));
+      .map(c => c instanceof Card ? c : Card.new(c));
   }
 
   toString() { 
@@ -36,18 +24,19 @@ export class Player {
   }
   
   canJoin(game) {
-    return this.cards.length >= game.board.minHand;
+    return true;
   }
 
   canUse(cardOrHand) {
-    if (cardOrHand.length) {
-      var hand = cardOrHand;
-      return hand.length == 5 
-        && hand.every(card => this.canUse(card));
-    }
-    var card = cardOrHand;
-    // TODO needs to handle duplicates
-    return this.cards.some(c => c == card);
+    return true;
+  }
+
+  static new(player = {}) {
+    return new Player({
+      id: uuid(),
+      name: player.name,
+      cards: player.cards
+    });
   }
 }
 

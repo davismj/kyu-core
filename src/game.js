@@ -1,46 +1,26 @@
-import { Board } from "./board";
-import { ComputerPlayer } from "./player";
+import { Card } from './card';
+import { Board } from './board';
+import { ComputerPlayer } from './player';
+import uuid from './uuid';
 
 /** 
  * A game has two players and a Kyu board.
  * @class 
  */
 export class Game {
-  
-  /** 
-   * Creates a new game. Recycles an ended game if available, otherwise
-   * creates a new game and adds it to the cache of games.
-   * @static 
-   * @method new
-   * @return {Game} A new game.
-   */
-  static new() {
-    // var game = games.find(game => !game.isStarted);
-    // if (game) {
-    //  game.initialize();
-    // } else {
-    var game = new Game();
-    //  Game.games.push(game);
-    // }
-    return game;
-  }
 
   /** 
    * 
    */
-  // static games = [];
-
-  /** 
-   * 
-   */
-  constructor(rules = [Rules.ADJACENT]) {
-    this.players = new Set();
-    this.hands = new Map();
-    this.board = new Board(3,3);
-    this.rules = rules;
-    this.status = GameStatus.NEW;
-    this.turn = null;
-    this.winner = null;
+  constructor(game = {}) {
+    this.id = game.id;
+    this.players = game.players; // TODO handle
+    this.hands = game.hands; // TODO handle
+    this.board = game.board; // TODO handle
+    this.rules = game.rules;
+    this.status = game.status;
+    this.turn = game.turn;
+    this.winner = game.winner;
   }
 
   /**
@@ -56,16 +36,20 @@ export class Game {
     this.winner = null;
   }
 
-  add(player, hand) {
-    hand = hand.slice(); 
-    if (player.canJoin(this) 
-      && player.canUse(hand)) {
-
+  addPlayer(player) {
+    if (player.canJoin(this)) {
       this.players.add(player);
-      this.hands.set(player, hand.map(card => {
-        var cardIndex = player.cards.indexOf(card);
-        return player.cards.splice(cardIndex, 1)[0];
-      }));
+    }
+  }
+
+  getPlayer(playerId) {
+    return Array.from(this.players).find(p => p.id == playerId);
+  }
+
+  useHand(player, hand) {
+    // todo if player is in game
+    if (player.canUse(hand)) {
+      this.hands.set(player, hand);  
     }
   }
   
@@ -89,15 +73,16 @@ export class Game {
    * @method start
    * @argument {Player} [turn] 
    */
-  start(turn = this.players.values().next().value) {
-    
-    // verify that turn is valid
-    // if (turn !== 0 && turn !== 1)
-    //  throw `Invalid player ${turn} provided.`;
-
+  start(turn) {
+    if (!turn) {
+      for (let player of this.players) {
+        if (!turn || Date.now() % 2 < 1) {
+          turn = player;
+        }
+      }
+    }
     this.turn = turn;
     this.status = GameStatus.STARTED;
-    console.log('Game started.');
   }
 
   /** 
@@ -210,6 +195,17 @@ export class Game {
         this.play(this.turn, best.card, best.pos);
       }, 2000);
     }
+  }
+
+  static new(game = {}) {
+    return new Game({
+      id: game.id || uuid(),
+      players: new Set(),
+      hands: new Map(),
+      board: new Board(3,3),
+      rules: game.rules || [Rules.ADJACENT],
+      status: GameStatus.NEW
+    });
   }
 }
 

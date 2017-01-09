@@ -2,11 +2,18 @@
   "name": "kyu-core",
   "version": "0.1.0",
   "description": "Engine for the 3x3 grid card game.",
-  "main": "src/main.js",
+  "main": "dist/kyu-core.js",
   "registry": "npm",
+  "devDependencies": {
+    "plugin-babel": "systemjs-plugin-babel@^0.0.18"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/davismj/kyu"
+  },
+  "scripts": {
+    "bundle": "jspm bundle src/main.js dist/main.js --minify --format cmd",
+    "link": "jspm link"
   },
   "keywords": [
     "game",
@@ -17,12 +24,6 @@
   "bugs": {
     "url": "https://github.com/davismj/kyu/issues"
   },
-  "homepage": "https://github.com/davismj/kyu",
-  "devDependencies": {
-    "gulp": "x.x.x",
-    "babelify": "x.x.x",
-    "browserify": "x.x.x",
-    "vinyl-source-stream": "x.x.x"
-  },
-  "dependencies": {}
+  "homepage": "https://github.com/davismj/kyu"
 }
+

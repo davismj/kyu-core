@@ -1,37 +1,51 @@
+import uuid from './uuid';
+
 /** 
  * Cards have four values and an optional type.
  * @class
  */
 export class Card {
-	constructor(values) {
-		this.id = Guid();
-		this.top = values.top;
-		this.right = values.right;
-		this.bottom = values.bottom;
-		this.left = values.left;
+
+	// to be used whenever creating a new card object
+	constructor(card) {
+		this.id = card.id || uuid();
+		this.top = card.top;
+		this.right = card.right;
+		this.bottom = card.bottom;
+		this.left = card.left;
 	}
 	toString() {
 		return `(${this.top}, ${this.right}, ${this.bottom}, ${this.left})`;
 	}
-	static random() {
-		let c = new Card({
-			top: Math.round(Math.random() * 10) + 1,
-			right: Math.round(Math.random() * 10) + 1,
-			bottom: Math.round(Math.random() * 10) + 1,
-			left: Math.round(Math.random() * 10) + 1
-		});
-		console.log(`Random card generated: ${c}.`);
-		return c;
-	}
-}
 
-// TODO, base 64 guid
-function Guid() {
-	return Guid.s4() + Guid.s4() + '-' + Guid.s4() + '-' + Guid.s4()
-   		+ '-' + Guid.s4() + '-' + Guid.s4() + Guid.s4() + Guid.s4();
-}
-Guid.s4 = function() {
-	return Math.floor((1 + Math.random()) * 0x10000)
-       .toString(16)
-       .substring(1);	
+	// to be used whenever generating a new card
+	static new(values = {}) {
+		return new Card({
+			id: uuid(),
+			top: values.top,
+			right: values.right,
+			bottom: values.bottom,
+			left: values.left
+		});
+	}
+
+	// card side from 0-9 
+	// max card value 18
+	static random() {
+		var arr = [0,0,0,0],
+			total = 0;
+		while (total < 18) {
+			let idx = Math.round(Math.random()*10) % 4
+			if (arr[idx] < 9) {
+				arr[idx] += 1;
+				total += 1;
+			}
+		}
+		return Card.new({
+			top: arr[0],
+			right: arr[1],
+			bottom: arr[2],
+			left: arr[3]
+		});
+	}
 }
