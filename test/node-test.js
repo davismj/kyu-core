@@ -1,6 +1,4 @@
-var Card = require('./main').Card,
-	Game = require('./main').Game,
-	Player = require('./main').Player;
+var { Card, Game, Player } = require('../dist/kyu-core');
 
 // create a new game 
 var game = new Game();

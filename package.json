@@ -4,6 +4,7 @@
   "description": "Engine for the 3x3 grid card game.",
   "main": "dist/kyu-core.js",
   "registry": "npm",
+  "dependencies": {},
   "devDependencies": {
     "plugin-babel": "systemjs-plugin-babel@^0.0.18"
   },
@@ -12,8 +13,8 @@
     "url": "https://github.com/davismj/kyu"
   },
   "scripts": {
-    "bundle": "jspm bundle src/main.js dist/main.js --minify --format cmd",
-    "link": "jspm link"
+    "build": "jspm build src/main dist/kyu-core.js --minify --format cjs",
+    "test": "npm run build & node node-test.js"
   },
   "keywords": [
     "game",
